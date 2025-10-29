@@ -5,21 +5,21 @@ According to the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blo
 ## Content
 
 
-|**Signal hierarchy**|**Data model and type**|**Minimal Accuracy**|
-|---|---|---|
-|map_reference|str<br><br>Content depends on the chosen map association option (see 'Map reference' below).||
-|country_code|int [3 digit ISO country code (e.g. germany=276,usa=840)].||
-|version|InterfaceVersion||
-|. version_major|int||
-|. version_minor|int||
-|. version_patch|int||
-|proj_frame_offset|GroundTruthProjFrameOffset|0,2 m|
-|. position|Vector3D|0,2 m|
-|. yaw|float|0,035 rad (2°)|
-|proj_string|str [PROJ coordinate transformation software library]<br><br>Mandatory for real world data; Can be omitted for simulation data.||
-|timestamp|Timestamp (total time is combination of seconds and nanos)||
-|. nanos|int||
-|. seconds|int||
+|**Signal hierarchy**|**Data model and type**|**Minimal Accuracy**|*implemented* | *tested* |
+|---|---|---|---|---|
+|map_reference|str<br><br>Content depends on the chosen map association option (see 'Map reference' below).|| X |
+|country_code|int [3 digit ISO country code (e.g. germany=276,usa=840)].|| X |
+|version|InterfaceVersion| | X |
+|. version_major|int| | X |
+|. version_minor|int| | X |
+|. version_patch|int| | X |
+|proj_frame_offset|GroundTruthProjFrameOffset|0,2 m| X |
+|. position|Vector3D|0,2 m|  X |
+|. yaw|float|0,035 rad (2°)|  X |
+|proj_string|str [PROJ coordinate transformation software library]<br><br>Mandatory for real world data; Can be omitted for simulation data.|| X |
+|timestamp|Timestamp (total time is combination of seconds and nanos)|| X |
+|. nanos|int|| X |
+|. seconds|int|| X |
 |host_vehicle_id|Identifier||
 |. value|int||
 |moving_object|list[MovingObject]||
@@ -70,4 +70,4 @@ The following rules apply to OMEGA-PRIME multi-channel trace files:
 
 ![MCAP file with embedded OpenDRIVE map](mcap_file.png)
 
-We make the design choice to store the `OpenDrive` map in the MCAP channel `ground_truth_map`, ensuring that the association between map and ground truth can not be lost. Map references must be ensured to match!
+We make the design choice to store the `OpenDrive` map in the MCAP topic `ground_truth_map`, ensuring that the association between map and ground truth can not be lost. Map references must be ensured to match!
