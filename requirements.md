@@ -4,6 +4,7 @@ According to the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blo
 
 ## Content
 
+The following information is to be repeated for every frame / every `GroundTruthMessage`:
 
 |**Signal hierarchy**|**Data model and type**|**Minimal Accuracy**|*implemented* | *tested* |
 |---|---|---|---|---|
