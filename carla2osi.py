@@ -1,4 +1,5 @@
 import carla
+from typing import Tuple
 
 
 class Carla2OSI:
@@ -27,8 +28,9 @@ class Carla2OSI:
 
         timestamp = world_snapshot.timestamp
 
+        # Process each actor snapshot
         for actor_snapshot in world_snapshot:
-            # Process each actor snapshot
+            
             movingobject_id_value = actor_snapshot.id
 
             movingobject_base_dimension_x = None
@@ -38,18 +40,37 @@ class Carla2OSI:
             movingobject_base_position_x = None
             movingobject_base_position_y = None
             movingobject_base_position_z = None
+            # actor_snapshot.get_transform().location
 
             movingobject_base_orientation_x = None
             movingobject_base_orientation_y = None
             movingobject_base_orientation_z = None
+            # actor_snapshot.get_transform().rotation
 
             movingobject_base_velocity = None
+            # actor_snapshot.get_velocity()
             movingobject_base_acceleration = None
+            # actor_snapshot.get_acceleration()
 
             movingobject_type = None  # Other, Vehicle, Pedestrian, Animal
 
             movingobject_vehicleclassification_type = None  # Other, car, delivery van, semitrailer, trailer, motorbike, bicycle, bus, tram, train, wheelchair, standup scooter
             movingobject_vehicleclassification_role = None  # Other, civil, ambulance, fire, police, public transport, road assistance, garbage collection, road construction, military
 
+    def _convert_geometry_to_osi_x(self, x: float) -> float:
+        return 0
     
+    def _convert_geometry_to_osi_y(self, y: float) -> float:
+        return 0
+    
+    def _convert_geometry_to_osi_z(self, z: float) -> float:
+        return 0
+    
+    def _convert_geometry_to_osi_carlaVector3D(self, vector: carla.Vector3D) -> Tuple[float, float, float]:
+        x_osi = self._convert_geometry_to_osi_x(vector.x)
+        y_osi = self._convert_geometry_to_osi_y(vector.y)
+        z_osi = self._convert_geometry_to_osi_z(vector.z)
+        return (x_osi, y_osi, z_osi)
+
+
     # TODO: add traffic lights
