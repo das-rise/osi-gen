@@ -32,10 +32,12 @@ class Carla2OSI:
         for actor_snapshot in world_snapshot:
             
             movingobject_id_value = actor_snapshot.id
+            # use this id to get the actor bounding box from the list of all actors, world.get_actors()
 
             movingobject_base_dimension_x = None
             movingobject_base_dimension_y = None
             movingobject_base_dimension_z = None
+            # use actor id from snapshot to get bounding box dimensions
 
             movingobject_base_position_x = None
             movingobject_base_position_y = None
