@@ -1,52 +1,122 @@
 import carla
+import polars as pl
 from typing import Tuple
-
 
 class Carla2Traj:
 
+    def __init__(self, world: carla.World, debug: bool = False):
+        self._world = world
+        self._debug = debug
+        self.df = pl.DataFrame(schema={
+            'timestamp': pl.Float64,
+            'movingobject_id': pl.Int64,
+            'dimension_x': pl.Float64,
+            'dimension_y': pl.Float64,
+            'dimension_z': pl.Float64,
+            'position_x': pl.Float64,
+            'position_y': pl.Float64,
+            'position_z': pl.Float64,
+            'orientation_x': pl.Float64,
+            'orientation_y': pl.Float64,
+            'orientation_z': pl.Float64,
+            'velocity': pl.Float64,
+            'acceleration': pl.Float64,
+            'type': pl.Utf8,
+            'vehicleclassification_type': pl.Utf8,
+            'vehicleclassification_role': pl.Utf8
+        })
+
     def process_world_snapshot(self, world_snapshot: carla.WorldSnapshot):
 
-        timestamp = world_snapshot.timestamp
+        timestamp = world_snapshot.timestamp.elapsed_seconds
 
         # Process each actor snapshot
         for actor_snapshot in world_snapshot:
             
             movingobject_id_value = actor_snapshot.id
-            # use this id to get the actor bounding box from the list of all actors, world.get_actors()
+            actor = self._get_actor(movingobject_id_value)
 
-            movingobject_base_dimension_x = None
-            movingobject_base_dimension_y = None
-            movingobject_base_dimension_z = None
+            actor_type = self._get_type_from_carla_actor(actor)
+            if actor_type is None:
+                continue  # Skip unknown actor types
+
+            bounding_box_extent = self._get_extent_from_carla_bounding_box(actor.bounding_box)
+            dimension_x = bounding_box_extent[0]
+            dimension_y = bounding_box_extent[1]
+            dimension_z = bounding_box_extent[2]
             # use actor id from snapshot to get bounding box dimensions
 
-            movingobject_base_position_x = None
-            movingobject_base_position_y = None
-            movingobject_base_position_z = None
-            # actor_snapshot.get_transform().location
+            position_x = actor_snapshot.get_transform().location.x
+            position_y = actor_snapshot.get_transform().location.y
+            position_z = actor_snapshot.get_transform().location.z
 
-            movingobject_base_orientation_x = None
-            movingobject_base_orientation_y = None
-            movingobject_base_orientation_z = None
-            # actor_snapshot.get_transform().rotation
+            orientation_x = actor_snapshot.get_transform().rotation.pitch
+            orientation_y = actor_snapshot.get_transform().rotation.yaw
+            orientation_z = actor_snapshot.get_transform().rotation.roll
 
-            movingobject_base_velocity = None
-            # actor_snapshot.get_velocity()
-            movingobject_base_acceleration = None
-            # actor_snapshot.get_acceleration()
+            velocity = actor_snapshot.get_velocity().length()
+            acceleration = actor_snapshot.get_acceleration().length()
 
-            movingobject_type = None  # Other, Vehicle, Pedestrian, Animal
+            vehicleclassification_type = None 
+            vehicleclassification_role = None
 
-            movingobject_vehicleclassification_type = None  # Other, car, delivery van, semitrailer, trailer, motorbike, bicycle, bus, tram, train, wheelchair, standup scooter
-            movingobject_vehicleclassification_role = None  # Other, civil, ambulance, fire, police, public transport, road assistance, garbage collection, road construction, military
+            # Append data to DataFrame
+            new_row = {
+                'timestamp': timestamp,
+                'movingobject_id': movingobject_id_value,
+                'dimension_x': dimension_x,
+                'dimension_y': dimension_y,
+                'dimension_z': dimension_z,
+                'position_x': position_x,
+                'position_y': position_y,
+                'position_z': position_z,
+                'orientation_x': orientation_x,
+                'orientation_y': orientation_y,
+                'orientation_z': orientation_z,
+                'velocity': velocity,
+                'acceleration': acceleration,
+                'type': actor_type or 'Other',
+                'vehicleclassification_type': vehicleclassification_type or 'Other',
+                'vehicleclassification_role': vehicleclassification_role or 'Other'
+            }
+
+            if self._debug:
+                print(f"[CARLA2TRAJ] Processed actor ID {movingobject_id_value} at timestamp {timestamp}")
+                print(new_row['dimension_x'], new_row['dimension_y'], new_row['dimension_z'])
+
+    def _get_actor(self, actor_id: int) -> carla.Actor:
+        try:
+            return [actor for actor in self._world.get_actors() if actor.id == actor_id][0]
+        except IndexError:
+            raise ValueError(f"No actor found with ID {actor_id}")
+        
+    def _get_extent_from_carla_bounding_box(self, bounding_box: carla.BoundingBox) -> Tuple[float, float, float]:
+        """Convert CARLA bounding box extent to OSI dimensions (x, y, z).
+        
+        Args:
+            bounding_box: CARLA bounding box
+
+        Returns:
+            Extents in OSI coordinates as (ext_x, ext_y, ext_z)
+        """
+        extent = bounding_box.extent
+        # The bounding box vector in carla is half-extent, so double it
+        return tuple(2 * abs(coord) for coord in self._convert_carlaVector3D_to_osi(extent))
+        
+    def _get_type_from_carla_actor(self, actor: carla.Actor) -> str:
+        TYPES = ["Other", "Vehicle", "Pedestrian", "Animal"]
+        type_id = actor.type_id
+        if type_id.split(".")[0] == "vehicle":
+            return "Vehicle"
 
     def _convert_coord_to_osi_x(self, x: float) -> float:
-        return 0
+        return x
     
     def _convert_coord_to_osi_y(self, y: float) -> float:
-        return 0
+        return y
     
     def _convert_coord_to_osi_z(self, z: float) -> float:
-        return 0
+        return z
     
     def _convert_carlaVector3D_to_osi(self, vector: carla.Vector3D) -> Tuple[float, float, float]:
         x_osi = self._convert_coord_to_osi_x(vector.x)
