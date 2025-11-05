@@ -1,6 +1,7 @@
 import carla
 import polars as pl
 from typing import Tuple
+from math import pi
 
 class Carla2Traj:
 
@@ -135,6 +136,15 @@ class Carla2Traj:
         y_osi = self._convert_coord_to_osi_y(vector.y)
         z_osi = self._convert_coord_to_osi_z(vector.z)
         return (x_osi, y_osi, z_osi)
+    
+    def _convert_carlaRotation_to_osi(self, rotation: carla.Rotation) -> Tuple[float, float, float]:
+        # check for reference https://github.com/DLR-TS/Carla-OSI-Service/blob/main/src/carla_osi/Geometry.cpp
+        # and reference with https://opensimulationinterface.github.io/osi-antora-generator/asamosi/latest/gen/structosi3_1_1Orientation3d.html
+        pitch_osi   = rotation.pitch * pi / 180.0
+        yaw_osi     = rotation.yaw * pi / 180.0 * (-1)
+        roll_osi    = rotation.roll * pi / 180.0
+        # return in order "rotation around x, around y, around z" -> roll, pitch, yaw
+        return (roll_osi, pitch_osi, yaw_osi) 
 
     def add_map_reference(self, map_reference: str):
         self.map_reference = map_reference
