@@ -18,11 +18,11 @@ class Carla2Traj:
             'position_x': pl.Float64,
             'position_y': pl.Float64,
             'position_z': pl.Float64,
-            'orientation_x': pl.Float64,
-            'orientation_y': pl.Float64,
-            'orientation_z': pl.Float64,
-            'velocity': pl.Float64,
-            'acceleration': pl.Float64,
+            'orientation_x': pl.Float64, # roll
+            'orientation_y': pl.Float64, # pitch
+            'orientation_z': pl.Float64, # yaw
+            'velocity': pl.List(pl.Float64), # [vx, vy, vz]
+            'acceleration': pl.List(pl.Float64), # [ax, ay, az]
             'type': pl.Utf8,
             'vehicleclassification_type': pl.Utf8,
             'vehicleclassification_role': pl.Utf8
@@ -51,16 +51,16 @@ class Carla2Traj:
             dimension_z = bounding_box_extent[2]
             # use actor id from snapshot to get bounding box dimensions
 
-            position_x = actor_snapshot.get_transform().location.x
-            position_y = actor_snapshot.get_transform().location.y
-            position_z = actor_snapshot.get_transform().location.z
+            position_x = self._convert_coord_to_osi_x(actor_snapshot.get_transform().location.x)
+            position_y = self._convert_coord_to_osi_y(actor_snapshot.get_transform().location.y)
+            position_z = self._convert_coord_to_osi_z(actor_snapshot.get_transform().location.z)
 
             orientation_x = actor_snapshot.get_transform().rotation.pitch
             orientation_y = actor_snapshot.get_transform().rotation.yaw
             orientation_z = actor_snapshot.get_transform().rotation.roll
 
-            velocity = actor_snapshot.get_velocity().length()
-            acceleration = actor_snapshot.get_acceleration().length()
+            velocity = list(self._convert_carlaVector3D_to_osi(actor_snapshot.get_velocity()))
+            acceleration = list(self._convert_carlaVector3D_to_osi(actor_snapshot.get_acceleration()))
 
             vehicleclassification_type = None 
             vehicleclassification_role = None
@@ -88,7 +88,7 @@ class Carla2Traj:
 
             if self._debug:
                 print(f"[CARLA2TRAJ] Processed actor ID {movingobject_id_value} at timestamp {timestamp}")
-                print(new_row['frame'])
+                print(new_row['acceleration'])
 
     def _get_frame(self, world_snapshot: carla.WorldSnapshot) -> int: 
         # Calculate frame number in current run by subtracting first frame of this run
@@ -126,7 +126,8 @@ class Carla2Traj:
         return x
     
     def _convert_coord_to_osi_y(self, y: float) -> float:
-        return y
+        # invert y-axis
+        return -y
     
     def _convert_coord_to_osi_z(self, z: float) -> float:
         return z
