@@ -8,6 +8,7 @@ class Carla2Traj:
         self._world = world
         self._debug = debug
         self.df = pl.DataFrame(schema={
+            'frame': pl.Int64,
             'timestamp': pl.Float64,
             'movingobject_id': pl.Int64,
             'dimension_x': pl.Float64,
@@ -26,9 +27,12 @@ class Carla2Traj:
             'vehicleclassification_role': pl.Utf8
         })
 
+        self._first_frame = None
+
     def process_world_snapshot(self, world_snapshot: carla.WorldSnapshot):
 
         timestamp = world_snapshot.timestamp.elapsed_seconds
+        frame_number = self._get_frame(world_snapshot)
 
         # Process each actor snapshot
         for actor_snapshot in world_snapshot:
@@ -62,6 +66,7 @@ class Carla2Traj:
 
             # Append data to DataFrame
             new_row = {
+                'frame': frame_number,
                 'timestamp': timestamp,
                 'movingobject_id': movingobject_id_value,
                 'dimension_x': dimension_x,
@@ -82,7 +87,14 @@ class Carla2Traj:
 
             if self._debug:
                 print(f"[CARLA2TRAJ] Processed actor ID {movingobject_id_value} at timestamp {timestamp}")
-                print(new_row['dimension_x'], new_row['dimension_y'], new_row['dimension_z'])
+                print(new_row['frame'])
+
+    def _get_frame(self, world_snapshot: carla.WorldSnapshot) -> int: 
+        # Calculate frame number in current run by subtracting first frame of this run
+        # (Carla has a global frame counter counting from when the simulator was started)
+        if self._first_frame is None:
+            self._first_frame = world_snapshot.frame  
+        return world_snapshot.frame - self._first_frame
 
     def _get_actor(self, actor_id: int) -> carla.Actor:
         try:
