@@ -3,30 +3,15 @@ import polars as pl
 from typing import Tuple
 from math import pi
 
+from traj2x import Traj2X
+from traj import TrajDF
+
 class Carla2Traj:
 
     def __init__(self, world: carla.World, debug: bool = False):
         self._world = world
         self._debug = debug
-        self.df = pl.DataFrame(schema={
-            'frame': pl.Int64,
-            'timestamp': pl.Float64,
-            'movingobject_id': pl.Int64,
-            'dimension_x': pl.Float64,
-            'dimension_y': pl.Float64,
-            'dimension_z': pl.Float64,
-            'position_x': pl.Float64,
-            'position_y': pl.Float64,
-            'position_z': pl.Float64,
-            'orientation_x': pl.Float64, # roll
-            'orientation_y': pl.Float64, # pitch
-            'orientation_z': pl.Float64, # yaw
-            'velocity': pl.List(pl.Float64), # [vx, vy, vz]
-            'acceleration': pl.List(pl.Float64), # [ax, ay, az]
-            'type': pl.Utf8,
-            'vehicleclassification_type': pl.Utf8,
-            'vehicleclassification_role': pl.Utf8
-        })
+        self.df = TrajDF()
 
         self._first_frame = None
 
@@ -86,9 +71,14 @@ class Carla2Traj:
                 'vehicleclassification_role': vehicleclassification_role or 'Other'
             }
 
+            self.df().extend(pl.DataFrame([new_row]))
+
             if self._debug:
                 print(f"[CARLA2TRAJ] Processed actor ID {movingobject_id_value} at timestamp {timestamp}")
                 print(new_row['acceleration'])
+
+    def convert_to_file(self, traj_converter: Traj2X, output_path: str):
+        pass
 
     def _get_frame(self, world_snapshot: carla.WorldSnapshot) -> int: 
         # Calculate frame number in current run by subtracting first frame of this run
