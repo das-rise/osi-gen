@@ -77,8 +77,29 @@ class Carla2Traj:
                 print(f"[CARLA2TRAJ] Processed actor ID {movingobject_id_value} at timestamp {timestamp}")
                 print(new_row['acceleration'])
 
-    def convert_to_file(self, traj_converter: Traj2X, output_path: str):
-        pass
+    def convert(self, traj_converter: Traj2X, output_path: str):
+        converter = traj_converter(self.df)
+        converter(output_path)
+        
+    def save(self, filename: str = ""):
+        from datetime import datetime
+
+        datetime_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"traj_{datetime_str}.parquet" if filename == "" else filename
+        self.df().write_parquet(filename)
+        print(f">Saved trajectory DataFrame to {filename}.<")
+
+    def load(self, filename: str):
+        check_df = TrajDF()()
+        loaded_df = pl.read_parquet(filename)
+        assert check_df.schema == loaded_df.schema, "Loaded DataFrame schema does not match TrajDF schema (`traj.py`)."
+        self.df = loaded_df
+
+    @staticmethod
+    def from_file(filename: str):
+        carla2traj = Carla2Traj(world=None)  # world is not needed for loading from file
+        carla2traj.load(filename)
+        return carla2traj
 
     def _get_frame(self, world_snapshot: carla.WorldSnapshot) -> int: 
         # Calculate frame number in current run by subtracting first frame of this run
