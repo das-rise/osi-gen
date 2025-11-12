@@ -1,7 +1,6 @@
 from traj import TrajDF
 from polars import DataFrame
 from typing import Generator, Any
-import betterosi
 
 NANOS_PER_SECOND = 1_000_000_000
 
