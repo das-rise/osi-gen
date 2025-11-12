@@ -2,8 +2,6 @@ from traj import TrajDF
 from polars import DataFrame
 from typing import Generator, Any
 
-NANOS_PER_SECOND = 1_000_000_000
-
 
 class Traj2X:
     """Base class for trajectory format converters."""
@@ -18,5 +16,3 @@ class Traj2X:
         # Generator to traverse the trajectory DataFrame frame by frame
         for frame, frame_data in self._traj_df.sort("frame").group_by("frame"):
             yield frame_data
-
-

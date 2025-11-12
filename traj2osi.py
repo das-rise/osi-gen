@@ -1,6 +1,10 @@
+from typing import Any
 import betterosi
 from traj2x import Traj2X
 from traj import TrajDF
+
+NANOS_PER_SECOND = 1_000_000_000
+
 
 class Traj2OSI(Traj2X):
     """Converter to OSI format as specified in SYNERGIES OmegaPrime, https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/omega_prime_specification.md."""
