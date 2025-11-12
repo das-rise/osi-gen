@@ -54,9 +54,15 @@ class Carla2Traj:
                 actor_snapshot.get_transform().location.z
             )
 
-            orientation_x = actor_snapshot.get_transform().rotation.pitch
-            orientation_y = actor_snapshot.get_transform().rotation.yaw
-            orientation_z = actor_snapshot.get_transform().rotation.roll
+            orientation_x = self._convert_carlaRotation_pitch_to_osi(
+                actor_snapshot.get_transform().rotation.pitch
+            )
+            orientation_y = self._convert_carlaRotation_yaw_to_osi(
+                actor_snapshot.get_transform().rotation.yaw
+            )
+            orientation_z = self._convert_carlaRotation_roll_to_osi(
+                actor_snapshot.get_transform().rotation.roll
+            )
 
             velocity = list(
                 self._convert_carlaVector3D_to_osi(actor_snapshot.get_velocity())
@@ -202,15 +208,19 @@ class Carla2Traj:
         z_osi = self._convert_coord_to_osi_z(vector.z)
         return (x_osi, y_osi, z_osi)
 
-    def _convert_carlaRotation_to_osi(
-        self, rotation: carla.Rotation
-    ) -> Tuple[float, float, float]:
+    def _convert_carlaRotation_pitch_to_osi(self, pitch: float) -> float:
         # check for reference https://github.com/DLR-TS/Carla-OSI-Service/blob/main/src/carla_osi/Geometry.cpp
         # and reference with https://opensimulationinterface.github.io/osi-antora-generator/asamosi/latest/gen/structosi3_1_1Orientation3d.html
-        pitch_osi = rotation.pitch * pi / 180.0
-        yaw_osi = rotation.yaw * pi / 180.0 * (-1)
-        roll_osi = rotation.roll * pi / 180.0
-        # return in order "rotation around x, around y, around z" -> roll, pitch, yaw
-        return (roll_osi, pitch_osi, yaw_osi)
+        return pitch * pi / 180.0
+
+    def _convert_carlaRotation_yaw_to_osi(self, yaw: float) -> float:
+        # check for reference https://github.com/DLR-TS/Carla-OSI-Service/blob/main/src/carla_osi/Geometry.cpp
+        # and reference with https://opensimulationinterface.github.io/osi-antora-generator/asamosi/latest/gen/structosi3_1_1Orientation3d.html
+        return yaw * pi / 180.0 * (-1)
+
+    def _convert_carlaRotation_roll_to_osi(self, roll: float) -> float:
+        # check for reference https://github.com/DLR-TS/Carla-OSI-Service/blob/main/src/carla_osi/Geometry.cpp
+        # and reference with https://opensimulationinterface.github.io/osi-antora-generator/asamosi/latest/gen/structosi3_1_1Orientation3d.html
+        return roll * pi / 180.0
 
     # TODO: add traffic lights
