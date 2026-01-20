@@ -1,4 +1,4 @@
-from traj import TrajDF
+from traj_convert.traj import TrajDF
 from polars import DataFrame
 from typing import Generator, Any
 

@@ -1,7 +1,7 @@
 from typing import Any
 import betterosi
-from traj2x import Traj2X
-from traj import TrajDF
+from traj_convert.traj2x import Traj2X
+from traj_convert.traj import TrajDF
 
 NANOS_PER_SECOND = 1_000_000_000
 

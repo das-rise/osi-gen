@@ -3,8 +3,8 @@ import polars as pl
 from typing import Tuple
 from math import pi
 
-from traj2x import Traj2X
-from traj import TrajDF
+from traj_convert.traj2x import Traj2X
+from traj_convert.traj import TrajDF
 
 
 class Carla2Traj:

@@ -1,5 +1,5 @@
-from traj2x import Traj2X
-from traj import TrajDF
+from traj_convert.traj2x import Traj2X
+from traj_convert.traj import TrajDF
 
 
 class Traj2OpenLabel(Traj2X):

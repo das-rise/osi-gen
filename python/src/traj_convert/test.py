@@ -1,5 +1,5 @@
-from carla2traj import Carla2Traj
-from traj2osi import Traj2OSI
+from traj_convert.carla2traj import Carla2Traj
+from traj_convert.traj2osi import Traj2OSI
 
 traj = Carla2Traj.from_file(
     "/home/bastian/repos/synergies-carla-scenic/RiRun/traj_20251112_101757.parquet"
