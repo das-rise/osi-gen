@@ -1,4 +1,4 @@
-# OSI-Gen
+# Trajectory Converter
 
 Create a python functionality that enables to generate `OpenSimulationInterface` (`OSI`) trace files carrying `GroundTruth` information compliant with 
 the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/omega_prime_specification.md) format developed in the Synergies project. For more details about the requirements, check [`requirements.md`](requirements.md).
@@ -10,6 +10,14 @@ the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/o
  - **Extendability**: From the internal recordings format (easily-readable Polars dataframe), convert to additional output formats such as ASAM OpenLabel
 
 ## Quickstart
+
+Install with `pip` from inside this folder:
+
+```bash
+pip install .
+```
+
+### Generate Recording
 
 First, the trajectories inside a `Carla` simulation are recorded. To do this, a `polars` DataFrame containing annotations for every frame of a `Carla` simulation is generated.
 Inside a `carla.Client`, this can be done as such:
@@ -32,6 +40,13 @@ traj_recorder.save()
 
 This saves the trajecory recording to a `parquet` file with a timestamped filename.
 
+### Convert Recording
+
+Next, the trajectories are converted. For this, `carla2traj.py` is run on the parquet file directly from the command line. The `help` section explains how the conversion can be done:
+
+```bash
+user:~$ python -m traj_convert --help
+```
 
 ## Acknowledgments
 
