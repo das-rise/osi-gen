@@ -28,7 +28,6 @@ class Carla2Traj:
 
         # Process each actor snapshot
         for actor_snapshot in world_snapshot:
-
             movingobject_id_value = actor_snapshot.id
             actor = self._get_actor(movingobject_id_value)
 
@@ -71,8 +70,12 @@ class Carla2Traj:
                 self._convert_carlaVector3D_to_osi(actor_snapshot.get_acceleration())
             )
 
-            vehicleclassification_type = None
-            vehicleclassification_role = None
+            vehicleclassification_type = (
+                self._get_vehicleclassification_type_from_carla_actor(actor)
+                if actor_type == "Vehicle"
+                else "Other"
+            )
+            vehicleclassification_role = "civil" if actor_type == "Vehicle" else "Other"
 
             # Append data to DataFrame
             new_row = {
@@ -135,9 +138,9 @@ class Carla2Traj:
         """
         check_df = TrajDF()()
         loaded_df = pl.read_parquet(filename)
-        assert (
-            check_df.schema == loaded_df.schema
-        ), "Loaded DataFrame schema does not match TrajDF schema (`traj.py`)."
+        assert check_df.schema == loaded_df.schema, (
+            "Loaded DataFrame schema does not match TrajDF schema (`traj.py`)."
+        )
         self.df = loaded_df
 
     @staticmethod
@@ -184,11 +187,23 @@ class Carla2Traj:
             2 * abs(coord) for coord in self._convert_carlaVector3D_to_osi(extent)
         )
 
+    def _get_vehicleclassification_type_from_carla_actor(
+        self, actor: carla.Actor
+    ) -> str:
+        # Basic length-based classification for vehicles, can be expanded with more detailed logic if needed
+        length = self._get_extent_from_carla_bounding_box(actor.bounding_box)[0]
+        if length < 4.0:
+            return "car"
+        else:
+            return "truck"
+
     def _get_type_from_carla_actor(self, actor: carla.Actor) -> str:
-        TYPES = ["Other", "Vehicle", "Pedestrian", "Animal"]
+        # TYPES = ["Other", "Vehicle", "Pedestrian", "Animal"]
         type_id = actor.type_id
         if type_id.split(".")[0] == "vehicle":
             return "Vehicle"
+        else:
+            return "Other"
 
     def _convert_coord_to_osi_x(self, x: float) -> float:
         return x

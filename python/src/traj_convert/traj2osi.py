@@ -35,7 +35,6 @@ class Traj2OSI(Traj2X):
                 # for now, we only register moving objects
                 moving_objects = []
                 for object in frame_data.iter_rows(named=True):
-
                     # For now, we assume the first object is the host vehicle
                     host_vehicle_id = (
                         betterosi.Identifier(object["movingobject_id"])
@@ -45,14 +44,12 @@ class Traj2OSI(Traj2X):
 
                     base = self._get_base_moving(object)
 
-                    # TODO: vehicle classification mapping
                     moving_objects.append(
                         betterosi.MovingObject(
                             id=betterosi.Identifier(object["movingobject_id"]),
                             type=self._get_movingobject_type(object),
-                            vehicle_classification=betterosi.MovingObjectVehicleClassification(
-                                type=betterosi.MovingObjectVehicleClassificationType.UNKNOWN,
-                                role=betterosi.MovingObjectVehicleClassificationRole.UNKNOWN,
+                            vehicle_classification=self._get_movingobjectvehicleclassification(
+                                object
                             ),
                             base=base,
                         )
@@ -99,6 +96,33 @@ class Traj2OSI(Traj2X):
             return betterosi.MovingObjectType.OTHER
         else:
             return betterosi.MovingObjectType.UNKNOWN
+
+    def _get_movingobjectvehicleclassification(
+        self, object: dict[str, Any]
+    ) -> betterosi.MovingObjectVehicleClassification:
+        type_str = object["vehicleclassification_type"]
+        role_str = object["vehicleclassification_role"]
+
+        if type_str == "Other":
+            return betterosi.MovingObjectVehicleClassification(
+                type=betterosi.MovingObjectVehicleClassificationType.OTHER,
+                role=betterosi.MovingObjectVehicleClassificationRole.OTHER,
+            )
+        elif type_str == "Car":
+            return betterosi.MovingObjectVehicleClassification(
+                type=betterosi.MovingObjectVehicleClassificationType.CAR,
+                role=betterosi.MovingObjectVehicleClassificationRole.CIVIL,
+            )
+        elif type_str == "Truck":
+            return betterosi.MovingObjectVehicleClassification(
+                type=betterosi.MovingObjectVehicleClassificationType.TRUCK,
+                role=betterosi.MovingObjectVehicleClassificationRole.CIVIL,
+            )
+        else:
+            return betterosi.MovingObjectVehicleClassification(
+                type=betterosi.MovingObjectVehicleClassificationType.UNKNOWN,
+                role=betterosi.MovingObjectVehicleClassificationRole.UNKNOWN,
+            )
 
     def _get_base_moving(self, object: dict[str, Any]) -> betterosi.BaseMoving:
         return betterosi.BaseMoving(
