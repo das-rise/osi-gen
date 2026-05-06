@@ -81,7 +81,7 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
                 "OSI format requires all 4 arguments: country_code, version, proj_string, map_reference"
             )
 
-        from traj2osi import Traj2OSI  # Assuming this import exists
+        from traj_convert.traj2osi import Traj2OSI 
 
         converter_args = {
             "country_code": args.arg1,
@@ -99,7 +99,7 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
         traj.convert(Traj2OSI, output_path, converter_args)
 
     else:  # openlabel
-        from traj2openlabel import Traj2OpenLabel  # Assuming this import exists
+        from traj_convert.traj2openlabel import Traj2OpenLabel  # Assuming this import exists
 
         converter_args = {"dummy_a": args.arg1, "dummy_b": args.arg2}
 
