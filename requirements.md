@@ -28,19 +28,19 @@ The following information is to be repeated for every frame / every `GroundTruth
 |. . value|int||
 |. base|BaseMoving||
 |. . dimension|Dimension3D||
-|. . . x|float [m]|0,2 m|
-|. . . y|float [m]|0,2 m|
-|. . . z|float [m]|0,2 m|
+|. . . x|float [m]|0,2 m| X |
+|. . . y|float [m]|0,2 m| X |
+|. . . z|float [m]|0,2 m| X |
 |. . position|Vector3D||
-|. . . x|float [m]|0,2 m|
-|. . . y|float [m]|0,2 m|
-|. . . z|float [m]|0,2 m|
+|. . . x|float [m]|0,2 m| X |
+|. . . y|float [m]|0,2 m| X |
+|. . . z|float [m]|0,2 m| X |
 |. . orientation|Orientation3D||
-|. . . roll|float [rad]|0,035 rad (2°)|
-|. . . pitch|float [rad]|0,035 rad (2°)|
-|. . . yaw|float [rad]|0,035 rad (2°)|
-|. . velocity|Vector3D|0,1 m/s|
-|. . acceleration|Vector3D|0,1 m/s^2|
+|. . . roll|float [rad]|0,035 rad (2°)| X |
+|. . . pitch|float [rad]|0,035 rad (2°)| X |
+|. . . yaw|float [rad]|0,035 rad (2°)| X |
+|. . velocity|Vector3D|0,1 m/s| X |
+|. . acceleration|Vector3D|0,1 m/s^2| X |
 |. type|MovingObjectType<br><br>(Other, Vehicle, Pedestrian, Animal)||
 |. vehicle_classification|MovingObjectVehicleClassification||
 |. . type|MovingObjectVehicleClassificationType<br><br>(Other, car, delivery van, semitrailer, trailer, motorbike, bicycle, bus, tram, train, wheelchair, standup scooter)||
