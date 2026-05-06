@@ -7,7 +7,6 @@ the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/o
 
  - **Carla trajectory recording**: Record trajectories of vehicles inside a Carla simulation with the help of a simple function call inside of a `Carla` client that is `tick()`-ing the simulation
  - **Recording conversion**: Convert recordings into an `OmegaPrime` / OSI trace file from the command line
- - **Extendability**: From the internal recordings format (easily-readable Polars dataframe), convert to additional output formats such as ASAM OpenLabel
 
 ## Quickstart
 
@@ -42,11 +41,13 @@ This saves the trajecory recording to a `parquet` file with a timestamped filena
 
 ### Convert Recording
 
-Next, the trajectories are converted. For this, `carla2traj.py` is run on the parquet file directly from the command line. The `help` section explains how the conversion can be done:
+Next, the trajectories are converted to OSI format from the command line:
 
 ```bash
-user:~$ python -m traj_convert --help
+python -m traj_convert traj.parquet 752 0.1.0 "" "Town01.xodr" -o output.osi
 ```
+
+Run `python -m traj_convert --help` for details on all arguments.
 
 ## Acknowledgments
 

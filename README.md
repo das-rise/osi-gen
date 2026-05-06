@@ -7,7 +7,6 @@ the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/o
 
  - **Carla trajectory recording**: Record trajectories of vehicles inside a Carla simulation with the help of a simple function call inside of a `Carla` client that is `tick()`-ing the simulation
  - **Recording conversion**: Convert recordings into an `OmegaPrime` / OSI trace file from the command line
- - **Extendability**: From the internal recordings format (easily-readable Polars dataframe), convert to additional output formats such as ASAM OpenLabel
 
 ## Quickstart
 

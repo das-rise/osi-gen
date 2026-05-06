@@ -5,9 +5,9 @@ if __name__ == "__main__":
     from rich_argparse import RichHelpFormatter
 
     parser = argparse.ArgumentParser(
-        description="Convert CARLA trajectory data to OmegaPrime-compliant OSI or OpenLabel format",
+        description="Convert CARLA trajectory data to OmegaPrime-compliant OSI format",
         epilog="""
-Example usage: `python carla2traj.py traj.parquet osi 752 0.1.0 "" "Town01.xodr" -o output.osi`
+Example usage: `python -m traj_convert traj.parquet 752 0.1.0 "" "Town01.xodr" -o output.osi`
 To generate the CARLA trajectory parquet file, please confer the README.md in this repository.
         """,
         formatter_class=RichHelpFormatter,
@@ -18,41 +18,35 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
         help="Path to the input parquet file containing trajectory data",
     )
     parser.add_argument(
-        "format",
-        type=str,
-        choices=["osi", "openlabel"],
-        help="Output format: 'osi' or 'openlabel'",
-    )
-    parser.add_argument(
-        "arg1",
+        "country_code",
         type=int,
-        help="For OSI: ISO country_code (int), For OpenLabel: dummy argument A",
+        help="ISO country code (int, e.g. 276 for Germany, 840 for USA)",
     )
     parser.add_argument(
-        "arg2",
+        "version",
         type=str,
-        help="For OSI: version (X.Y.Z), For OpenLabel: dummy argument B",
+        help="OSI version string (X.Y.Z)",
     )
     parser.add_argument(
-        "arg3",
-        type=str,
-        nargs="?",
-        default=None,
-        help="For OSI: proj_string (str) (optional for OpenLabel)",
-    )
-    parser.add_argument(
-        "arg4",
+        "proj_string",
         type=str,
         nargs="?",
-        default=None,
-        help="For OSI: map_reference (str) (optional for OpenLabel)",
+        default="",
+        help="PROJ coordinate transformation string (default: empty)",
+    )
+    parser.add_argument(
+        "map_reference",
+        type=str,
+        nargs="?",
+        default="",
+        help="Map reference, e.g. an OpenDRIVE file name (default: empty)",
     )
     parser.add_argument(
         "-o",
         "--output",
         type=str,
         default=None,
-        help="Output file path (default: auto-generated based on format)",
+        help="Output file path (default: auto-generated with timestamp)",
     )
 
     args = parser.parse_args()
@@ -67,46 +61,25 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
         from datetime import datetime
 
         datetime_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-        if args.format == "osi":
-            output_path = f"trajectory_osi_{datetime_str}.osi"
-        else:
-            output_path = f"trajectory_openlabel_{datetime_str}.json"
+        output_path = f"trajectory_osi_{datetime_str}.osi"
     else:
         output_path = args.output
 
-    # Convert based on selected format
-    if args.format == "osi":
-        if args.arg3 is None or args.arg4 is None:
-            parser.error(
-                "OSI format requires all 4 arguments: country_code, version, proj_string, map_reference"
-            )
+    from traj_convert.traj2osi import Traj2OSI
 
-        from traj_convert.traj2osi import Traj2OSI 
+    converter_args = {
+        "country_code": args.country_code,
+        "version": args.version,
+        "proj_string": args.proj_string,
+        "map_reference": args.map_reference,
+    }
 
-        converter_args = {
-            "country_code": args.arg1,
-            "version": args.arg2,
-            "proj_string": args.arg3,
-            "map_reference": args.arg4,
-        }
+    print("Converting to OSI format with:")
+    print(f"  country_code: {args.country_code}")
+    print(f"  version: {args.version}")
+    print(f"  proj_string: {args.proj_string}")
+    print(f"  map_reference: {args.map_reference}")
 
-        print("Converting to OSI format with:")
-        print(f"  country_code: {args.arg1}")
-        print(f"  version: {args.arg2}")
-        print(f"  proj_string: {args.arg3}")
-        print(f"  map_reference: {args.arg4}")
-
-        traj.convert(Traj2OSI, output_path, converter_args)
-
-    else:  # openlabel
-        from traj_convert.traj2openlabel import Traj2OpenLabel  # Assuming this import exists
-
-        converter_args = {"dummy_a": args.arg1, "dummy_b": args.arg2}
-
-        print("Converting to OpenLabel format with dummy arguments:")
-        print(f"  A: {args.arg1}")
-        print(f"  B: {args.arg2}")
-
-        traj.convert(Traj2OpenLabel, output_path, converter_args)
+    traj.convert(Traj2OSI, output_path, converter_args)
 
     print(f"Conversion complete! Output saved to: {output_path}")
