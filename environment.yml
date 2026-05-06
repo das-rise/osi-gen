@@ -152,4 +152,3 @@ dependencies:
       - tzdata==2025.2
       - xarray==2025.6.1
       - zstandard==0.25.0
-prefix: /home/bastian/miniforge3/envs/carla2traj
