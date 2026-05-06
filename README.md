@@ -3,6 +3,9 @@
 Generate `OpenSimulationInterface` (`OSI`) trace files carrying `GroundTruth` information compliant with 
 the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/omega_prime_specification.md) format developed in the Synergies project. For more details about the requirements, check [`requirements.md`](requirements.md).
 
+> [!NOTE]
+> This open source project is maintained by [RISE Research Institutes of Sweden](https://ri.se/). See license file for open source license information.
+
 ## Features
 
  - **Carla trajectory recording**: Record trajectories of vehicles inside a Carla simulation with the help of a simple function call inside of a `Carla` client that is `tick()`-ing the simulation
