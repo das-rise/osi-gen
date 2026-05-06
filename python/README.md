@@ -1,7 +1,7 @@
 # Trajectory Converter
 
 Create a python functionality that enables to generate `OpenSimulationInterface` (`OSI`) trace files carrying `GroundTruth` information compliant with 
-the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/omega_prime_specification.md) format developed in the Synergies project. For more details about the requirements, check [`requirements.md`](requirements.md).
+the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/omega_prime_specification.md) format developed in the Synergies project. For more details about the requirements, check [`requirements.md`](../requirements.md).
 
 ## Features
 
@@ -54,6 +54,6 @@ The generation of OSI files in this project relies on the [`betterosi`](https://
 
 This software was developed as part of the [Synergies](https://synergies-ccam.eu/) project.
 
-![Synergies-logo](media/synergies.png)
+![Synergies-logo](../media/synergies.png)
 
 Funded by the European Union. Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or European Climate, Infrastructure and Environment Executive Agency (CINEA). Neither the European Union nor the granting authority can be held responsible for them.
