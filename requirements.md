@@ -6,8 +6,8 @@ According to the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blo
 
 The following information is to be repeated for every frame / every `GroundTruthMessage`:
 
-|**Signal hierarchy**|**Data model and type**|**Minimal Accuracy**|*implemented* | *tested* |
-|---|---|---|---|---|
+|**Signal hierarchy**|**Data model and type**|**Minimal Accuracy**|*implemented* | 
+|---|---|---|---|
 |map_reference|str<br><br>Content depends on the chosen map association option (see 'Map reference' below).|| X |
 |country_code|int [3 digit ISO country code (e.g. germany=276,usa=840)].|| X |
 |version|InterfaceVersion| | X |
@@ -22,13 +22,13 @@ The following information is to be repeated for every frame / every `GroundTruth
 |. nanos|int|| X |
 |. seconds|int|| X |
 |host_vehicle_id|Identifier||
-|. value|int||
+|. value|int|| X |
 |moving_object|list[MovingObject]||
 |. id|Identifier||
 |. . value|int||
 |. base|BaseMoving||
 |. . dimension|Dimension3D||
-|. . . x|float [m]|0,2 m| X |
+|. . . x|float [m]|0,2 m| X | 
 |. . . y|float [m]|0,2 m| X |
 |. . . z|float [m]|0,2 m| X |
 |. . position|Vector3D||
@@ -41,10 +41,10 @@ The following information is to be repeated for every frame / every `GroundTruth
 |. . . yaw|float [rad]|0,035 rad (2°)| X |
 |. . velocity|Vector3D|0,1 m/s| X |
 |. . acceleration|Vector3D|0,1 m/s^2| X |
-|. type|MovingObjectType<br><br>(Other, Vehicle, Pedestrian, Animal)||
-|. vehicle_classification|MovingObjectVehicleClassification||
-|. . type|MovingObjectVehicleClassificationType<br><br>(Other, car, delivery van, semitrailer, trailer, motorbike, bicycle, bus, tram, train, wheelchair, standup scooter)||
-|. . role|MovingObjectVehicleClassificationRole<br><br>(Other, civil, ambulance, fire, police, public transport, road assistance, garbage collectin, road construction, military)||
+|. type|MovingObjectType<br><br>(Other, Vehicle, Pedestrian, Animal)| | X |
+|. vehicle_classification|MovingObjectVehicleClassification|  
+|. . type| |MovingObjectVehicleClassificationType<br><br>(Other, car, delivery van, semitrailer, trailer, motorbike, bicycle, bus, tram, train, wheelchair, standup scooter)|  X |
+|. . role|  |MovingObjectVehicleClassificationRole<br><br>(Other, civil, ambulance, fire, police, public transport, road assistance, garbage collectin, road construction, military)|  X |
 |traffic_light|list[TrafficLight]||
 |. id|Identifier||
 |. . value|int||
