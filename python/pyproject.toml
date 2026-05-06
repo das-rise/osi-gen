@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "traj_convert"
-version = "0.9.0"
+version = "0.9.1"
 authors = [
   { name="Bastian Havers-Zulka", email="bastian.havers-zulka@ri.se" },
 ]
-description = "Record and convert trajectories."
+description = "Record and convert trajectories from Carla."
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
