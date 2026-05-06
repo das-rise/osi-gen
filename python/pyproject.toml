@@ -10,13 +10,15 @@ authors = [
 ]
 description = "Record and convert trajectories from Carla."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 classifiers = [
     "Programming Language :: Python :: 3",
     "Operating System :: OS Independent",
 ]
 dependencies = [
+    "betterosi",
     "carla==0.9.15",
     "polars",
+    "rich-argparse",
 ]
 license = {file = "LICENSE"}
