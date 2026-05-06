@@ -10,10 +10,12 @@ the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/o
 
 ## Quickstart
 
-Install with `pip`:
+Install with `pip` or `uv`:
 
 ```bash
 pip install .
+# or
+uv pip install .
 ```
 
 ### Generate Recording
