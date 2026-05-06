@@ -2,7 +2,7 @@ __pycache__/
 *.py[cod]
 
 # Python packaging artifacts
-python/build/
-python/dist/
-python/*.egg-info/
-python/.eggs/
+build/
+dist/
+*.egg-info/
+.eggs/
