@@ -193,9 +193,9 @@ class Carla2Traj:
         # Basic length-based classification for vehicles, can be expanded with more detailed logic if needed
         length = self._get_extent_from_carla_bounding_box(actor.bounding_box)[0]
         if length < 4.0:
-            return "car"
+            return "Car"
         else:
-            return "truck"
+            return "Truck"
 
     def _get_type_from_carla_actor(self, actor: carla.Actor) -> str:
         # TYPES = ["Other", "Vehicle", "Pedestrian", "Animal"]
