@@ -90,7 +90,7 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
             "map_reference": args.arg4,
         }
 
-        print(f"Converting to OSI format with:")
+        print("Converting to OSI format with:")
         print(f"  country_code: {args.arg1}")
         print(f"  version: {args.arg2}")
         print(f"  proj_string: {args.arg3}")
@@ -103,7 +103,7 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
 
         converter_args = {"dummy_a": args.arg1, "dummy_b": args.arg2}
 
-        print(f"Converting to OpenLabel format with dummy arguments:")
+        print("Converting to OpenLabel format with dummy arguments:")
         print(f"  A: {args.arg1}")
         print(f"  B: {args.arg2}")
 
