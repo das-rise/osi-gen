@@ -1,4 +1,8 @@
-import carla
+try:
+    import carla
+except ImportError:
+    carla = None
+
 import polars as pl
 from typing import Tuple
 from math import pi
@@ -7,10 +11,20 @@ from traj_convert.traj2x import Traj2X
 from traj_convert.traj import TrajDF
 
 
+def _require_carla():
+    if carla is None:
+        raise ImportError(
+            "The 'carla' package is required for recording. "
+            "Install it with: pip install .[carla]"
+        )
+
+
 class Carla2Traj:
     """Class to ingest CARLA simulation data into a trajectory DataFrame (TrajDF) suitable for further processing or conversion."""
 
-    def __init__(self, world: carla.World, debug: bool = False):
+    def __init__(self, world=None, debug: bool = False):
+        if world is not None:
+            _require_carla()
         self._world = world
         self._debug = debug
         self.df = TrajDF()

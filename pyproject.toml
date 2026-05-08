@@ -17,8 +17,10 @@ classifiers = [
 ]
 dependencies = [
     "betterosi",
-    "carla==0.9.15",
     "polars",
     "rich-argparse",
 ]
 license = {file = "LICENSE"}
+
+[project.optional-dependencies]
+carla = ["carla==0.9.15"]
