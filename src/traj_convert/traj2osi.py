@@ -1,4 +1,5 @@
 from typing import Any
+import polars as pl
 import betterosi
 from traj_convert.traj2x import Traj2X
 from traj_convert.traj import TrajDF
@@ -32,7 +33,10 @@ class Traj2OSI(Traj2X):
 
         with betterosi.Writer(output_path) as writer_osi:
             for frame_data in self._traverse_frames():
-                # for now, we only register moving objects
+                frame_data = frame_data.filter(pl.col("type") == "Vehicle")
+                if frame_data.is_empty():
+                    continue
+
                 moving_objects = []
                 for object in frame_data.iter_rows(named=True):
                     # For now, we assume the first object is the host vehicle
