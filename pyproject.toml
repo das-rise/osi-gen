@@ -24,3 +24,4 @@ license = {file = "LICENSE"}
 
 [project.optional-dependencies]
 carla = ["carla==0.9.15"]
+omega-prime = ["omega-prime"]

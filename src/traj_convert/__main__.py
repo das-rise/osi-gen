@@ -48,6 +48,14 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
         default=None,
         help="Output file path (default: auto-generated with timestamp)",
     )
+    parser.add_argument(
+        "--omega-prime",
+        action="store_true",
+        default=False,
+        help="Output an OmegaPrime-compliant MCAP file with embedded OpenDRIVE map. "
+        "Requires the 'omega-prime' extra: pip install .[omega-prime]. "
+        "The map_reference argument must be a valid path to an .xodr file.",
+    )
 
     args = parser.parse_args()
 
@@ -56,12 +64,13 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
     traj = Carla2Traj.from_file(args.parquet_file)
     print(f"Loaded {traj.df.height} frames.")
 
-    # Determine output path
+    # Determine output path and extension
     if args.output is None:
         from datetime import datetime
 
         datetime_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_path = f"trajectory_osi_{datetime_str}.osi"
+        ext = ".mcap" if args.omega_prime else ".osi"
+        output_path = f"trajectory_osi_{datetime_str}{ext}"
     else:
         output_path = args.output
 
@@ -80,6 +89,35 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
     print(f"  proj_string: {args.proj_string}")
     print(f"  map_reference: {args.map_reference}")
 
-    traj.convert(Traj2OSI, output_path, converter_args)
+    if args.omega_prime:
+        import tempfile
+        import os
+
+        try:
+            import omega_prime
+        except ImportError:
+            parser.error(
+                "The 'omega-prime' package is required for --omega-prime. "
+                "Install it with: pip install .[omega-prime]"
+            )
+
+        if not args.map_reference:
+            parser.error("--omega-prime requires map_reference to be a valid path to an .xodr file.")
+
+        # Write OSI to a temporary file, then convert to OmegaPrime MCAP
+        with tempfile.NamedTemporaryFile(suffix=".osi", delete=False) as tmp:
+            tmp_osi_path = tmp.name
+
+        try:
+            traj.convert(Traj2OSI, tmp_osi_path, converter_args)
+            print(f"Creating OmegaPrime MCAP with embedded map from {args.map_reference} ...")
+            recording = omega_prime.Recording.from_file(
+                tmp_osi_path, map_path=args.map_reference, validate=False, parse_map=False, apply_proj=False
+            )
+            recording.to_mcap(output_path)
+        finally:
+            os.unlink(tmp_osi_path)
+    else:
+        traj.convert(Traj2OSI, output_path, converter_args)
 
     print(f"Conversion complete! Output saved to: {output_path}")

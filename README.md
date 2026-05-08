@@ -51,6 +51,13 @@ Next, the trajectories are converted to OSI format from the command line:
 python -m traj_convert traj.parquet 752 0.1.0 "" "Town01.xodr" -o output.osi
 ```
 
+To create an [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime)-compliant MCAP file with an embedded OpenDRIVE map, install the optional `omega-prime` dependency and use the `--omega-prime` flag:
+
+```bash
+pip install .[omega-prime]
+python -m traj_convert traj.parquet 752 0.1.0 "+proj=..." "Town01.xodr" --omega-prime -o output.mcap
+```
+
 Run `python -m traj_convert --help` for details on all arguments.
 
 ## Visualization
