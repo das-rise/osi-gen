@@ -9,31 +9,30 @@ the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/o
 ## Features
 
  - **Carla trajectory recording** (Python ≥ 3.8): Record trajectories of vehicles inside a Carla simulation with the help of a simple function call inside of a `Carla` client that is `tick()`-ing the simulation
- - **Recording conversion** (Python ≥ 3.10): Convert recordings into an `OmegaPrime` / OSI trace file, either programmatically via `Traj2OSI` or from the command line
+ - **Recording conversion** (Python ≥ 3.10): Convert stored trajectory recordings into [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime)-compliant OSI trace files, either programmatically via `Traj2OSI` or from the command line
 
-## Python Compatibility
+## Installation
 
-This package supports two usage modes with different Python version requirements:
+| Use case | Python | Install command |
+|----------|--------|-----------------|
+| Store trajectories from Carla | ≥ 3.8 | `pip install .` |
+| Convert stored trajectories to OmegaPrime / OSI | ≥ 3.10 | `pip install .[cli]` |
 
-| Mode | Python | What you can do |
-|------|--------|-----------------|
-| **Library** | ≥ 3.8 | Record trajectories from Carla, save/load parquet files, write custom `Traj2X` converters |
-| **CLI / OSI conversion** | ≥ 3.10 | All of the above, plus `Traj2OSI` conversion and the `python -m traj_convert` CLI |
-
-On Python 3.8–3.9, the `betterosi` and `rich-argparse` dependencies are **not installed**. Importing `traj_convert.traj2osi` or running the CLI on these versions will fail.
-
-## Quickstart
-
-Install with `pip` or `uv`:
+### Recording only (Python ≥ 3.8)
 
 ```bash
 pip install .
-# or
-uv pip install .
 ```
 
-> [!TIP]
-> On Python 3.8 or 3.9, only the library API is available (trajectory recording and DataFrame handling). Install on Python 3.10+ for OSI conversion and CLI features.
+This installs the core library with `polars` and `carla`. You can record trajectories inside a Carla simulation and save them as parquet files.
+
+### CLI / conversion mode (Python ≥ 3.10)
+
+```bash
+pip install .[cli]
+```
+
+This additionally installs `betterosi`, `rich-argparse`, and `omega-prime`, enabling the `python -m traj_convert` CLI and programmatic OSI conversion via `Traj2OSI`.
 
 ### Generate Recording
 
@@ -59,16 +58,15 @@ This saves the trajectory recording to a `parquet` file with a timestamped filen
 
 ### Convert Recording
 
-Next, the trajectories are converted to OSI format from the command line:
+The trajectories are converted to OSI format from the command line (requires `.[cli]` install):
 
 ```bash
 python -m traj_convert traj.parquet 752 0.1.0 "" "Town01.xodr" -o output.osi
 ```
 
-To create an [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime)-compliant MCAP file with an embedded OpenDRIVE map, install the optional `omega-prime` dependency and use the `--omega-prime` flag:
+To create an [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime)-compliant MCAP file with an embedded OpenDRIVE map, use the `--omega-prime` flag:
 
 ```bash
-pip install .[omega-prime]
 python -m traj_convert traj.parquet 752 0.1.0 "+proj=..." "Town01.xodr" --omega-prime -o output.mcap
 ```
 

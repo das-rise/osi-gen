@@ -17,11 +17,13 @@ classifiers = [
 ]
 dependencies = [
     "polars<1.9",
-    "betterosi; python_version >= '3.10'",
-    "rich-argparse; python_version >= '3.10'",
+    "carla==0.9.15; python_version < '3.10'",
 ]
 license = {file = "LICENSE"}
 
 [project.optional-dependencies]
-carla = ["carla==0.9.15"]
-omega-prime = ["omega-prime"]
+cli = [
+    "betterosi",
+    "rich-argparse",
+    "omega-prime",
+]
