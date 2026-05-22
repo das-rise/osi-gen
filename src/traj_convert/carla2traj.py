@@ -24,6 +24,8 @@ def _require_carla():
 class Carla2Traj:
     """Class to ingest CARLA simulation data into a trajectory DataFrame (TrajDF) suitable for further processing or conversion."""
 
+    ego_id = None
+
     def __init__(self, world=None, debug: bool = False):
         if world is not None:
             _require_carla()
@@ -112,6 +114,7 @@ class Carla2Traj:
                 "type": actor_type or "Other",
                 "vehicleclassification_type": vehicleclassification_type or "Other",
                 "vehicleclassification_role": vehicleclassification_role or "Other",
+                "ego": self.ego_id,
             }
 
             self.df().extend(pl.DataFrame([new_row]))
@@ -121,6 +124,13 @@ class Carla2Traj:
                     f"[CARLA2TRAJ] Processed actor ID {movingobject_id_value} at timestamp {timestamp}"
                 )
                 print(new_row["acceleration"])
+
+    def update_ego_id(self, ego_id: int = None):
+        """Assign or clear the ego ID for the trajectory data.
+        Args:
+            ego_id(int): The actor ID to designate as ego. If None, clears the ego designation.
+        """
+        self.ego_id = ego_id
 
     def convert(
         self, traj_converter: Traj2X, output_path: str, converter_args: dict = {}
