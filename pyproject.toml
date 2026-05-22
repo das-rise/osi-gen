@@ -26,4 +26,5 @@ cli = [
     "betterosi",
     "rich-argparse",
     "omega-prime",
+    "dataprov",
 ]

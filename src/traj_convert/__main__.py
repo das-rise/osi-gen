@@ -1,7 +1,14 @@
 from traj_convert.carla2traj import Carla2Traj
+from datetime import datetime, timezone
+
+def timestamp_now_dataprov() -> str:
+    """Returns the current timestamp in ISO 8601 format for use with dataprov."""
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 if __name__ == "__main__":
-    import sys
+    import sys, time
+
+    started_at = timestamp_now_dataprov()
 
     if sys.version_info < (3, 10):
         print(
@@ -18,7 +25,7 @@ if __name__ == "__main__":
         description="Convert CARLA trajectory data to OmegaPrime-compliant OSI format",
         epilog="""
 Example usage: `python -m traj_convert traj.parquet 752 0.1.0 "" "Town01.xodr" -o output.osi`
-To generate the CARLA trajectory parquet file, please confer the README.md in this repository.
+To generate the CARLA trajectory parquet file, please confer the `README.md` of the `osi-gen` repository.
         """,
         formatter_class=RichHelpFormatter,
     )
@@ -63,8 +70,13 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
         action="store_true",
         default=False,
         help="Output an OmegaPrime-compliant MCAP file with embedded OpenDRIVE map. "
-        "Requires the 'omega-prime' extra: pip install .[omega-prime]. "
         "The map_reference argument must be a valid path to an .xodr file.",
+    )
+    parser.add_argument(
+        "--input-provenance",
+        type=str,
+        default=None,
+        help="Path to an input provenance file (dataprov JSON) to link in the provenance chain.",
     )
 
     args = parser.parse_args()
@@ -102,14 +114,7 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
     if args.omega_prime:
         import tempfile
         import os
-
-        try:
-            import omega_prime
-        except ImportError:
-            parser.error(
-                "The 'omega-prime' package is required for --omega-prime. "
-                "Install it with: pip install .[omega-prime]"
-            )
+        import omega_prime
 
         if not args.map_reference:
             parser.error("--omega-prime requires map_reference to be a valid path to an .xodr file.")
@@ -129,5 +134,49 @@ To generate the CARLA trajectory parquet file, please confer the README.md in th
             os.unlink(tmp_osi_path)
     else:
         traj.convert(Traj2OSI, output_path, converter_args)
+
+    # Provenance tracking
+
+    from dataprov import ProvenanceChain
+    import hashlib
+    from importlib.metadata import PackageNotFoundError, metadata
+
+    unique_hash = hashlib.sha256(
+        (str(vars(args)) + str(time.time_ns())).encode()
+    ).hexdigest()
+    tool_name = "rirun"
+    try:
+        meta = metadata(tool_name)
+        tool_version = meta["Version"]
+    except PackageNotFoundError:
+        tool_version = "unknown"
+    entity_id = tool_name + "_" + unique_hash[:8]
+
+    chain = ProvenanceChain.create(
+        entity_id=entity_id,
+        initial_source=args.parquet_file,
+        description="Conversion of CARLA trajectory data to OSI format using traj_convert",
+        tags=["osi-gen", "traj_convert", "carla2osi", "conversion", "provenance", "Synergies"],
+    )
+
+    input_files = [args.parquet_file] + ([args.map_reference] if args.omega_prime else [])
+    input_formats = ["parquet"] + (["xodr"] if args.omega_prime else [])
+    input_prov = None
+    if args.input_provenance:
+        input_prov = [args.input_provenance] + ([None] if args.omega_prime else [])
+
+    chain.add(
+        started_at=started_at,
+        ended_at=timestamp_now_dataprov(),
+        tool_name=tool_name,
+        tool_version=tool_version,
+        arguments=" ".join(sys.argv[1:]),
+        operation="Conversion from carla trajectory parquet to OSI format" + (" with OmegaPrime MCAP output" if args.omega_prime else ""),
+        inputs=input_files,
+        input_formats=input_formats,
+        input_provenance_files=input_prov,
+        outputs=[output_path],
+        output_formats=["mcap" if args.omega_prime else "osi"],
+    )
 
     print(f"Conversion complete! Output saved to: {output_path}")
