@@ -114,7 +114,7 @@ class Carla2Traj:
                 "type": actor_type or "Other",
                 "vehicleclassification_type": vehicleclassification_type or "Other",
                 "vehicleclassification_role": vehicleclassification_role or "Other",
-                "ego": self.ego_id,
+                "ego_id": self.ego_id,
             }
 
             self.df().extend(pl.DataFrame([new_row]))
