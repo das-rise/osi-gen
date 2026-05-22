@@ -1,6 +1,16 @@
 from traj_convert.carla2traj import Carla2Traj
 
 if __name__ == "__main__":
+    import sys
+
+    if sys.version_info < (3, 10):
+        print(
+            f"Error: The traj_convert CLI requires Python 3.10 or later "
+            f"(running {sys.version_info.major}.{sys.version_info.minor}).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
     import argparse
     from rich_argparse import RichHelpFormatter
 

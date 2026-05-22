@@ -8,8 +8,19 @@ the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/o
 
 ## Features
 
- - **Carla trajectory recording**: Record trajectories of vehicles inside a Carla simulation with the help of a simple function call inside of a `Carla` client that is `tick()`-ing the simulation
- - **Recording conversion**: Convert recordings into an `OmegaPrime` / OSI trace file from the command line
+ - **Carla trajectory recording** (Python ≥ 3.8): Record trajectories of vehicles inside a Carla simulation with the help of a simple function call inside of a `Carla` client that is `tick()`-ing the simulation
+ - **Recording conversion** (Python ≥ 3.10): Convert recordings into an `OmegaPrime` / OSI trace file, either programmatically via `Traj2OSI` or from the command line
+
+## Python Compatibility
+
+This package supports two usage modes with different Python version requirements:
+
+| Mode | Python | What you can do |
+|------|--------|-----------------|
+| **Library** | ≥ 3.8 | Record trajectories from Carla, save/load parquet files, write custom `Traj2X` converters |
+| **CLI / OSI conversion** | ≥ 3.10 | All of the above, plus `Traj2OSI` conversion and the `python -m traj_convert` CLI |
+
+On Python 3.8–3.9, the `betterosi` and `rich-argparse` dependencies are **not installed**. Importing `traj_convert.traj2osi` or running the CLI on these versions will fail.
 
 ## Quickstart
 
@@ -20,6 +31,9 @@ pip install .
 # or
 uv pip install .
 ```
+
+> [!TIP]
+> On Python 3.8 or 3.9, only the library API is available (trajectory recording and DataFrame handling). Install on Python 3.10+ for OSI conversion and CLI features.
 
 ### Generate Recording
 
