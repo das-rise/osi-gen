@@ -28,7 +28,7 @@ class TrajDF(pl.DataFrame):
                 "type": pl.Utf8,
                 "vehicleclassification_type": pl.Utf8,
                 "vehicleclassification_role": pl.Utf8,
-                "ego_id": pl.Int32,
+                "ego_id": pl.Int64,
             }
         )
 
