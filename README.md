@@ -1,3 +1,5 @@
+<img src="media/osi-gen.png" width="250" align="center" />
+
 # CARLA OSI-Gen
 
 From a CARLA simulation, generate `OpenSimulationInterface` (`OSI`) trace files carrying `GroundTruth` information compliant with 
