@@ -1,6 +1,6 @@
-# OSI-Gen
+# CARLA OSI-Gen
 
-Generate `OpenSimulationInterface` (`OSI`) trace files carrying `GroundTruth` information compliant with 
+From a CARLA simulation, generate `OpenSimulationInterface` (`OSI`) trace files carrying `GroundTruth` information compliant with 
 the [OmegaPrime](https://github.com/ika-rwth-aachen/omega-prime/blob/main/docs/omega_prime_specification.md) format developed in the Synergies project. For more details about the requirements, check [`requirements.md`](requirements.md).
 
 > [!NOTE]
